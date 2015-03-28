@@ -1,0 +1,1 @@
+No unless they change what information is sent in return for DNS protocols. 

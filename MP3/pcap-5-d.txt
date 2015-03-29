@@ -1,1 +1,2 @@
-He seems to be developing an app or something for facebook because he is using multiple parts of the facebook api. Specifically there is visible use of the pixel and graph api's.
+He worked with the pixel and graph apis. 
+And it looks like he read his wall liked some things and looked at some photos and similar content.

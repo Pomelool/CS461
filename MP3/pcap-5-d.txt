@@ -1,0 +1,1 @@
+He seems to be developing an app or something for facebook because he is using multiple parts of the facebook api. Specifically there is visible use of the pixel and graph api's.

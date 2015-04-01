@@ -51,7 +51,7 @@ for ts, buf in pcap:
 								continue
 		
 					if(sum > 0):
-						print ipAdd
+						print socket.inet_ntoa(ipAdd)
 			except dpkt.dpkt.NeedData:
 				continue
 			except dpkt.dpkt.UnpackError:
